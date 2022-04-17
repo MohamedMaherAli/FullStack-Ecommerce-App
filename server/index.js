@@ -1,23 +1,32 @@
-import express from "express";
-import mongoose from "mongoose";
-import "dotenv/config";
-import cors from "cors";
-import bodyParser from "body-parser";
-import userRoutes from "./routes/users.js";
+import express from 'express';
+import mongoose from 'mongoose';
+import 'dotenv/config';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import userRoutes from './routes/users.js';
+import productRoutes from './routes/product.js';
+import { notFound, errorHandler } from './middleware/error.js';
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const MONGO_CONNECTION = process.env.MONGO_CONNECTION;
 
 //cors config
 app.use(cors());
 
 //parser config
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(bodyParser.json({ limit: '30mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }));
 
 //ROUTES
-app.use("/user", userRoutes);
+app.use('/api/auth', userRoutes);
+app.use('/api/products', productRoutes);
+
+//Fallback for url 404 errors
+app.use(notFound);
+
+//custom error handler middleware
+app.use(errorHandler);
 
 //DB and server connection
 mongoose

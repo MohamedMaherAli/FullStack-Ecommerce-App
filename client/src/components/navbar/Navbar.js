@@ -14,8 +14,10 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import { Link, useNavigate } from 'react-router-dom';
-import { Grid, Avatar } from '@mui/material';
+import { Grid, Avatar, Divider } from '@mui/material';
 import { createTheme } from '@mui/system';
+import logo from '../../logo/logo_transparent.png';
+import logoMobile from '../../logo/logo_transparent-2.png';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -66,7 +68,7 @@ const NavBar = () => {
         <Container maxWidth='xl'>
           <Grid container>
             <Grid item xs={2} sm={4} md={9}></Grid>
-            <Grid xs={10} sm={8} md={3} sx={{ margin: 'auto' }}>
+            <Grid item xs={10} sm={8} md={3} sx={{ margin: 'auto' }}>
               <Link to='/'>Explore Admin Dashboard</Link>
             </Grid>
           </Grid>
@@ -75,16 +77,18 @@ const NavBar = () => {
 
       <AppBar position='static' sx={{ backgroundColor: 'white' }} elevation={0}>
         <Container maxWidth='xl'>
-          <Toolbar disableGutters sx={{ color: 'black' }}>
+          <Toolbar disableGutters sx={{ color: 'black', overflow: 'hidden' }}>
             <IconButton disableRipple onClick={() => navigate('/')}>
-              <Typography
-                variant='h6'
-                noWrap
-                component='div'
-                sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
-              >
-                Logo
-              </Typography>
+              <Box
+                component='img'
+                src={logo}
+                sx={{
+                  objectFit: 'cover',
+                  height: '35px',
+                  mr: 2,
+                  display: { xs: 'none', md: 'flex' },
+                }}
+              />
             </IconButton>
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
@@ -124,14 +128,19 @@ const NavBar = () => {
                 ))}
               </Menu>
             </Box>
-            <Typography
-              variant='h6'
-              noWrap
-              component='div'
-              sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
-            >
-              LOGO
-            </Typography>
+
+            <Box
+              component='img'
+              src={logoMobile}
+              sx={{
+                objectFit: 'cover',
+                maxHeight: '40px',
+                mr: 2,
+                flexGrow: 10,
+                display: { xs: 'flex', md: 'none' },
+              }}
+            />
+
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
                 <Button

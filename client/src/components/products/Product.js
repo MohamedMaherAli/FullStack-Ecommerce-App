@@ -8,12 +8,18 @@ import { useNavigate } from 'react-router-dom';
 
 //name/ category/ price
 
-export default function Product() {
+export default function Product({ product }) {
   const navigate = useNavigate();
   return (
-    <Grid item xs={12} sm={6} md={4} xl={3}>
-      <Card sx={{ maxWidth: 345, padding: '7px' }}>
-        <CardActionArea onClick={() => navigate('/product/2')}>
+    <Grid item xs={12} sm={6} lg={4} xl={3}>
+      <Card
+        sx={{
+          maxWidth: 345,
+          padding: '7px',
+          height: '100%',
+        }}
+      >
+        <CardActionArea onClick={() => navigate(`/product/${product._id}`)}>
           <CardMedia
             component='img'
             height='240'
@@ -28,14 +34,18 @@ export default function Product() {
           />
           <CardContent>
             <Typography gutterBottom variant='h6' component='div'>
-              Good Book
+              {product.name}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
-              Books
+              {product.category}
             </Typography>
-            <Rating readOnly value={3.5} sx={{ marginLeft: '-4px' }} />
+            <Rating
+              readOnly
+              value={product.rating}
+              sx={{ marginLeft: '-4px' }}
+            />
             <Typography variant='body2' color='text.secondary'>
-              30$
+              {product.price}
             </Typography>
           </CardContent>
         </CardActionArea>
