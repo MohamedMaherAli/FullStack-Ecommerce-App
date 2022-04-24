@@ -1,40 +1,42 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import { useEffect } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Avatar from '@mui/material/Avatar';
+import { CircularProgress, Alert } from '@mui/material';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 // import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { signUp } from "../../actions/auth";
-import { useNavigate } from "react-router-dom";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signUp } from '../../actions/user';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 //Just for early testing
-const userEmails = ["1@gmail.com", "2@gmail.com", "3@gmail.com"];
+const userEmails = ['1@gmail.com', '2@gmail.com', '3@gmail.com'];
 
 function Copyright(props) {
   return (
     <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
+      variant='body2'
+      color='text.secondary'
+      align='center'
       {...props}
     >
-      {"Copyright © "}
+      {'Copyright © '}
       {/* <Link color="inherit" href="/">
         Ecommerce App
       </Link>{" "} */}
       {new Date().getFullYear()}
-      {"."}
+      {'.'}
     </Typography>
   );
 }
@@ -44,58 +46,72 @@ const theme = createTheme();
 export default function SignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { loading, error, userInfo } = useSelector(
+    (state) => state.userRegisterReducer
+  );
+
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      passwordConfirm: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      passwordConfirm: '',
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
-        .min(4, "cannot be less than 4 characters")
-        .max(15, "Cannot be more than 15 characters")
-        .required("First Name Required"),
+        .min(4, 'cannot be less than 4 characters')
+        .max(15, 'Cannot be more than 15 characters')
+        .required('First Name Required'),
       lastName: Yup.string()
-        .max(15, "Cannot be more than 15 characters")
-        .required("Last Name Required"),
+        .max(15, 'Cannot be more than 15 characters')
+        .required('Last Name Required'),
       email: Yup.string()
-        .notOneOf(userEmails, "Email already Registered")
+        .notOneOf(userEmails, 'Email already Registered')
         .lowercase()
         .email()
-        .required("Email Required"),
-      password: Yup.string().required("Password Required"),
+        .required('Email Required'),
+      password: Yup.string().required('Password Required'),
       passwordConfirm: Yup.string()
-        .oneOf([Yup.ref("password")], "Passwrod must match")
-        .required("Confirm Password Required"),
+        .oneOf([Yup.ref('password')], 'Passwrod must match')
+        .required('Confirm Password Required'),
     }),
     onSubmit: (values, { resetForm, setSubmitting }) => {
       setSubmitting(false);
-      dispatch(signUp(values, navigate));
+      dispatch(signUp(values, navigate, location));
       resetForm();
     },
   });
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/');
+    }
+  }, [userInfo, navigate]);
+
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component='main' maxWidth='xs'>
         <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          {error ? <Alert severity='error'>{error}</Alert> : null}
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <VpnKeyIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component='h1' variant='h5'>
             Sign up
           </Typography>
+          {loading ? <CircularProgress /> : null}
           <Box
-            component="form"
+            component='form'
             onSubmit={formik.handleSubmit}
             noValidate
             sx={{ mt: 1 }}
@@ -108,14 +124,14 @@ export default function SignUp() {
                       ? true
                       : false
                   }
-                  margin="normal"
+                  margin='normal'
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
-                  name="firstName"
+                  id='firstName'
+                  label='First Name'
+                  name='firstName'
                   value={formik.values.firstName}
-                  autoComplete="off"
+                  autoComplete='off'
                   autoFocus
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -133,14 +149,14 @@ export default function SignUp() {
                       ? true
                       : false
                   }
-                  margin="normal"
+                  margin='normal'
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
+                  id='lastName'
+                  label='Last Name'
+                  name='lastName'
                   value={formik.values.lastName}
-                  autoComplete="new-lastName"
+                  autoComplete='new-lastName'
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   helperText={
@@ -154,15 +170,15 @@ export default function SignUp() {
 
             <TextField
               error={formik.touched.email && formik.errors.email ? true : false}
-              margin="normal"
+              margin='normal'
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
+              id='email'
+              label='Email Address'
+              name='email'
               value={formik.values.email}
               onChange={formik.handleChange}
-              autoComplete="new-email"
+              autoComplete='new-email'
               onBlur={formik.handleBlur}
               helperText={
                 formik.touched.email && formik.errors.email
@@ -174,16 +190,16 @@ export default function SignUp() {
               error={
                 formik.touched.password && formik.errors.password ? true : false
               }
-              margin="normal"
+              margin='normal'
               required
               fullWidth
-              name="password"
+              name='password'
               value={formik.values.password}
               onChange={formik.handleChange}
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="new-password"
+              label='Password'
+              type='password'
+              id='password'
+              autoComplete='new-password'
               onBlur={formik.handleBlur}
               helperText={
                 formik.touched.password && formik.errors.password
@@ -198,16 +214,16 @@ export default function SignUp() {
                   ? true
                   : false
               }
-              margin="normal"
+              margin='normal'
               required
               fullWidth
-              name="passwordConfirm"
+              name='passwordConfirm'
               value={formik.values.passwordConfirm}
               onChange={formik.handleChange}
-              label="Confirm Password"
-              type="password"
-              id="passwordConfirm"
-              autoComplete="new-password"
+              label='Confirm Password'
+              type='password'
+              id='passwordConfirm'
+              autoComplete='new-password'
               onBlur={formik.handleBlur}
               helperText={
                 formik.touched.passwordConfirm && formik.errors.passwordConfirm
@@ -216,13 +232,13 @@ export default function SignUp() {
               }
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              control={<Checkbox value='remember' color='primary' />}
+              label='Remember me'
             />
             <Button
-              type="submit"
+              type='submit'
               fullWidth
-              variant="contained"
+              variant='contained'
               disabled={formik.isSubmitting || !formik.isValid}
               sx={{ mt: 3, mb: 2 }}
             >
@@ -235,7 +251,7 @@ export default function SignUp() {
                 </Link> */}
               </Grid>
               <Grid item>
-                <Link to="/auth/signin">Have an account? Sign in</Link>
+                <Link to='/user/signin'>Have an account? Sign in</Link>
               </Grid>
             </Grid>
           </Box>

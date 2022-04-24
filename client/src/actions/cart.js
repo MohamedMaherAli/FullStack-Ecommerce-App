@@ -1,4 +1,9 @@
-import { CART_ADD_ITEM, CART_REMOVE_ITEM } from './actionTypes';
+import {
+  CART_ADD_ITEM,
+  CART_REMOVE_ITEM,
+  CART_SAVE_SHIPPING_ADDRESS,
+  CART_SAVE_PAYMENT_METHOD,
+} from './actionTypes';
 import * as api from '../api/index';
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
@@ -32,4 +37,14 @@ export const removeFromCart = (id) => (dispatch, getState) => {
     'cartItems',
     JSON.stringify(getState().cartReducer.cartItems)
   );
+};
+
+export const saveShippinhAddress = (formData) => (dispatch, getstate) => {
+  dispatch({ type: CART_SAVE_SHIPPING_ADDRESS, payload: formData });
+  localStorage.setItem('shippingAddress', JSON.stringify(formData));
+};
+
+export const savePaymentMethod = (formData) => (dispatch, getState) => {
+  dispatch({ type: CART_SAVE_PAYMENT_METHOD, payload: formData });
+  localStorage.setItem('paymentMethod', JSON.stringify(formData));
 };

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,17 +12,24 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
-import { Link, useNavigate } from 'react-router-dom';
-import { Grid, Avatar, Divider } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Grid, Avatar, Divider, Badge } from '@mui/material';
 import { createTheme } from '@mui/system';
 import logo from '../../logo/logo_transparent.png';
 import logoMobile from '../../logo/logo_transparent-2.png';
+import { styled } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import { logout } from '../../actions/user';
 
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const NavBar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -41,8 +48,37 @@ const NavBar = () => {
     setAnchorElUser(null);
   };
 
-  const navigate = useNavigate();
+  const handleNavigationToSignInPage = () => navigate('/user/signin');
+
+  const settings = [
+    {
+      name: 'Profile',
+      handle: () => {
+        navigate('/user/profile');
+      },
+    },
+    {
+      name: 'Logout',
+      handle: () => {
+        dispatch(logout(navigate));
+      },
+    },
+  ];
+
   const theme = createTheme();
+
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      right: -3,
+      top: 13,
+      border: `2px solid ${theme.palette.background.paper}`,
+      padding: '0 4px',
+    },
+  }));
+
+  const user = useSelector((state) => state.userLoginReducer.userInfo);
+  const cartItems = useSelector((state) => state.cartReducer.cartItems);
+  const NumberItemsInCart = cartItems.reduce((acc, curr) => acc + curr.qty, 0);
 
   const navBarSideIconStyles = {
     fontSize: '30px',
@@ -50,7 +86,6 @@ const NavBar = () => {
       fontSize: '20px',
     },
   };
-
   return (
     <>
       <Box
@@ -158,20 +193,36 @@ const NavBar = () => {
                 flexGrow: 0,
               }}
             >
-              <Tooltip title='Open Profile'>
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <AccountCircleOutlinedIcon sx={navBarSideIconStyles} />
-                  <Typography fontSize='large'>Log in</Typography>
+              <Tooltip title={user ? 'Open Profile' : 'sign in'}>
+                <IconButton
+                  onClick={
+                    user ? handleOpenUserMenu : handleNavigationToSignInPage
+                  }
+                  sx={{ p: 0 }}
+                  disableRipple
+                >
+                  <AccountCircleOutlinedIcon sx={navBarSideIconStyles} />{' '}
+                  {user ? (
+                    <Typography fontSize='medium'>{user.name}</Typography>
+                  ) : null}
+                  {!user ? (
+                    <Typography fontSize='medium'>Log in</Typography>
+                  ) : null}
                 </IconButton>
               </Tooltip>
               <Tooltip title='Open Cart'>
-                <IconButton onClick={() => navigate('/cart')}>
-                  <ShoppingBagOutlinedIcon sx={navBarSideIconStyles} />
-                  <Typography fontSize='large'>2</Typography>
+                <IconButton onClick={() => navigate('/cart')} disableRipple>
+                  <StyledBadge
+                    fontSize='medium'
+                    badgeContent={NumberItemsInCart || 0}
+                    color='primary'
+                  >
+                    <ShoppingCartIcon />
+                  </StyledBadge>
                 </IconButton>
               </Tooltip>
               <Tooltip title='Search Products'>
-                <IconButton>
+                <IconButton disableRipple>
                   <SearchOutlinedIcon sx={navBarSideIconStyles} />
                 </IconButton>
               </Tooltip>
@@ -192,8 +243,14 @@ const NavBar = () => {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign='center'>{setting}</Typography>
+                  <MenuItem
+                    key={uuidv4()}
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      setting.handle();
+                    }}
+                  >
+                    <Typography textAlign='center'>{setting.name}</Typography>
                   </MenuItem>
                 ))}
               </Menu>
