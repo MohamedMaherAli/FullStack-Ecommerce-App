@@ -9,8 +9,8 @@ import auth from '../middleware/auth.js';
 const router = express.Router();
 
 router.post('/', auth, addOrderItems);
+router.get('/myorders', auth, loggInUserOrders);
 router.get('/:id', auth, getOrderById);
 router.put('/:id/pay', auth, updateOrderToPaid);
-router.get('/myorders', auth, loggInUserOrders);
 
 export default router;

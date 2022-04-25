@@ -16,7 +16,7 @@ import {
 } from './actionTypes';
 import * as api from '../api/index';
 
-export const signUp = (formData, navigate, location) => async (dispatch) => {
+export const signUp = (formData, navigate) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST });
     const config = { headers: { 'Content-Type': 'application/json' } };

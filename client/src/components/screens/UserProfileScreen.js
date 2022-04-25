@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
+
 import * as Yup from 'yup';
 import {
   Grid,
@@ -12,14 +13,20 @@ import {
   Snackbar,
   Typography,
 } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { createTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetails, updateUserDetails } from '../../actions/user';
 import { useNavigate } from 'react-router-dom';
+import { getLoggedInUserOrders } from '../../actions/order';
+
+import { StyledDataGrid } from './UserProfileScreenStyles';
 
 function UserProfileScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = createTheme();
   const [open, setOpen] = useState(true);
 
   const handleClose = (event, reason) => {
@@ -31,6 +38,8 @@ function UserProfileScreen() {
   };
 
   const userLogin = useSelector((state) => state.userLoginReducer.userInfo);
+  const order = useSelector((state) => state.myOrderListReducer);
+  const { loading: loadingOrder, error: errorOrder, orderList } = order;
 
   const userDetails = useSelector((state) => state.userDetailsReducer);
   const { user, loading, error } = userDetails;
@@ -42,6 +51,7 @@ function UserProfileScreen() {
 
   useEffect(() => {
     if (userLogin) {
+      dispatch(getLoggedInUserOrders());
       if (!user.name) {
         dispatch(getUserDetails('profile'));
       }
@@ -49,6 +59,71 @@ function UserProfileScreen() {
       navigate('/user/signin');
     }
   }, [userLogin, dispatch, navigate, user]);
+
+  const columns = [
+    { field: '_id', headerName: 'ID', width: 220, sortable: false },
+    {
+      field: 'createdAt',
+      headerName: 'DATE',
+      width: 130,
+      renderCell: (params) => {
+        return params.row.createdAt.substring(0, 10);
+      },
+    },
+    {
+      field: 'totalPrice',
+      headerName: 'TOTAL',
+      width: 90,
+      renderCell: (params) => {
+        return `$ ${params.row.totalPrice}`;
+      },
+    },
+    {
+      field: 'paidAt',
+      headerName: 'PAID',
+      width: 130,
+      renderCell: (params) => {
+        return params.row.paidAt ? (
+          params.row.paidAt.substring(0, 10)
+        ) : (
+          <Box component='span' color='warning'>
+            Not Paid
+          </Box>
+        );
+      },
+    },
+    {
+      field: 'isDelievered',
+      headerName: 'DELIVERED',
+      description: 'delievered.',
+      sortable: false,
+      width: 100,
+      renderCell: (params) => {
+        return params.row.isDelievered ? (
+          <CheckIcon />
+        ) : (
+          <CloseIcon sx={{ color: 'red' }} />
+        );
+      },
+    },
+    {
+      field: 'action',
+      headerName: 'Action',
+      sortable: false,
+      width: '150',
+      renderCell: (params) => {
+        return (
+          <Button
+            variant='contained'
+            color='info'
+            onClick={() => navigate(`/order/${params.row._id}`)}
+          >
+            Details
+          </Button>
+        );
+      },
+    },
+  ];
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -74,7 +149,6 @@ function UserProfileScreen() {
     },
   });
 
-  const theme = createTheme();
   return (
     <>
       <Grid container spacing={3} sx={{ marginTop: theme.spacing(3) }}>
@@ -194,7 +268,43 @@ function UserProfileScreen() {
           </Paper>
         </Grid>
         <Grid item xs={12} xl={8}>
-          ORDERS
+          {loadingOrder ? (
+            <CircularProgress /> ? (
+              errorOrder
+            ) : (
+              <Alert severity='error'>{errorOrder}</Alert>
+            )
+          ) : (
+            <>
+              <Paper sx={{ padding: theme.spacing(1) }} elevation={0}>
+                <Typography variant='h5' textAlign='center'>
+                  User Orders
+                </Typography>
+              </Paper>
+              <Paper
+                style={{
+                  height: 400,
+                  width: '100%',
+                  marginTop: theme.spacing(2),
+                }}
+                elevation={0}
+              >
+                {orderList.length > 0 ? (
+                  <StyledDataGrid
+                    rows={orderList}
+                    getRowId={(row) => row._id}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    disableColumnSelector
+                    disableColumnFilter
+                  />
+                ) : (
+                  <Alert severity='info'>You Have no orders</Alert>
+                )}
+              </Paper>
+            </>
+          )}
         </Grid>
       </Grid>
     </>

@@ -9,6 +9,9 @@ import {
   ORDER_PAY_SUCCESS,
   ORDER_PAY_FAILS,
   ORDER_PAY_RESET,
+  ORDER_MY_LIST_REQUEST,
+  ORDER_MY_LIST_SUCCESS,
+  ORDER_MY_LIST_FAILS,
 } from './actionTypes';
 
 import * as api from '../api/index';
@@ -85,3 +88,26 @@ export const updateOrderToPaid =
       });
     }
   };
+
+export const getLoggedInUserOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_MY_LIST_REQUEST });
+    const token = getState().userLoginReducer.userInfo.token;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${token}`,
+      },
+    };
+    const { data } = await api.getLoggedInUserOrders(config);
+    dispatch({ type: ORDER_MY_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ORDER_MY_LIST_FAILS,
+      payload:
+        error.respone && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};

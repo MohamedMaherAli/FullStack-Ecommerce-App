@@ -85,7 +85,6 @@ export const updateOrderToPaid = asyncHandler(async (req, res) => {
 //@access Private
 export const loggInUserOrders = asyncHandler(async (req, res) => {
   const id = req.userId;
-  console.log('called');
   const user = await User.findById(id);
   if (user) {
     const userOrders = await Order.find({ user: id });
