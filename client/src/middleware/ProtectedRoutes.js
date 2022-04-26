@@ -7,7 +7,14 @@ const useAuth = () => {
   return isLoggedIn;
 };
 
-const ProtectedRoutes = () => {
+const useAdmin = () => {
+  const isAdmin = useSelector(
+    (state) => state.userLoginReducer.userInfo.isAdmin
+  );
+  return isAdmin;
+};
+
+export const ProtectedRoutes = () => {
   const location = useLocation();
   const isAuth = useAuth();
   return isAuth ? (
@@ -17,4 +24,8 @@ const ProtectedRoutes = () => {
   );
 };
 
-export default ProtectedRoutes;
+export const ProtectedAdminRoutes = () => {
+  const isAuth = useAuth();
+  const isAdmin = useAdmin();
+  return isAdmin && isAuth ? <Outlet /> : <Navigate to='/user/signin' />;
+};

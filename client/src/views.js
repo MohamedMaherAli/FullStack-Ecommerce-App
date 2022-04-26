@@ -8,9 +8,17 @@ import SignIn from './components/screens/SiginInScreen';
 import UserProfileScreen from './components/screens/UserProfileScreen';
 import ShippingScreen from './components/screens/ShippingScreen';
 import PaymentScreen from './components/screens/PaymentScreen';
-import ProtectedRoutes from './middleware/ProtectedRoutes';
+import {
+  ProtectedRoutes,
+  ProtectedAdminRoutes,
+} from './middleware/ProtectedRoutes';
 import PlaceOrderScreen from './components/screens/PlaceOrderScreen';
 import OrderScreen from './components/screens/OrderScreen';
+import DashboardScreen from './components/adminScreens/DashboardScreen';
+import AdminUsersScreen from './components/adminScreens/AdminUsersScreen';
+import AdminOrdersScreen from './components/adminScreens/AdminOrdersScreen';
+import AdminHomeScreen from './components/adminScreens/AdminHomeScreen';
+import AdminProductsScreen from './components/adminScreens/AdminProductsScreen';
 
 function Views() {
   return (
@@ -25,6 +33,25 @@ function Views() {
         <Route path='/placeorder' element={<PlaceOrderScreen />} />
         <Route path='/user/profile' element={<UserProfileScreen />} />
         <Route path='/order/:id' element={<OrderScreen />} />
+      </Route>
+
+      <Route element={<ProtectedAdminRoutes />}>
+        <Route
+          path='/admin/dashboard'
+          element={<DashboardScreen component={<AdminHomeScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/users'
+          element={<DashboardScreen component={<AdminUsersScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/products'
+          element={<DashboardScreen component={<AdminProductsScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/orders'
+          element={<DashboardScreen component={<AdminOrdersScreen />} />}
+        />
       </Route>
 
       <Route path='/product/:id' element={<ProductScreen />} />

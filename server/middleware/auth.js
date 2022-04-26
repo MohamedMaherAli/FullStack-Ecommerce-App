@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import 'dotenv/config';
 
-const auth = asyncHandler(async (req, res, next) => {
+export const auth = asyncHandler(async (req, res, next) => {
   let token;
   if (
     req.headers.authorization &&
@@ -14,6 +14,7 @@ const auth = asyncHandler(async (req, res, next) => {
     if (isCustomToken) {
       decodeData = jwt.verify(token, process.env.JWT_SECRET);
       req.userId = decodeData?.id;
+      req.isAdmin = decodeData?.isAdmin;
     } else {
       decodeData = jwt.decode(token);
       req.userId = decodeData?.sub;
@@ -27,4 +28,11 @@ const auth = asyncHandler(async (req, res, next) => {
   }
 });
 
-export default auth;
+export const isAdmin = (req, res, next) => {
+  if (req.isAdmin === true) {
+    next();
+  } else {
+    res.status(401);
+    throw new Error('Not authorized as an admin');
+  }
+};

@@ -5,7 +5,7 @@ import {
   updateOrderToPaid,
   loggInUserOrders,
 } from '../controllers/order.js';
-import auth from '../middleware/auth.js';
+import { auth } from '../middleware/auth.js';
 const router = express.Router();
 
 router.post('/', auth, addOrderItems);

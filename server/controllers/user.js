@@ -22,7 +22,7 @@ export const signIn = asyncHandler(async (req, res) => {
     throw new Error('Invalid credentials');
   }
 
-  const token = generateToken(existingUser._id);
+  const token = generateToken(existingUser._id, existingUser.isAdmin);
 
   res.status(200).json({
     id: existingUser._id,
@@ -50,13 +50,7 @@ export const signUp = asyncHandler(async (req, res) => {
     password,
   });
   await user.save();
-  const token = jwt.sign(
-    { email: user.email, id: user._id },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: '2d',
-    }
-  );
+  const token = generateToken(user._id, user.isAdmin);
   res.status(201).json({
     id: user._id,
     name: user.name,
@@ -108,5 +102,18 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
   } else {
     res.status(404);
     throw new Error('User not found');
+  }
+});
+
+//@desc   get all users
+//@route  GET /api/users
+//@access Private/Admin
+export const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({});
+  if (users) {
+    res.status(200).json(users);
+  } else {
+    res.status(400);
+    throw new Error('Something went wrong');
   }
 });
