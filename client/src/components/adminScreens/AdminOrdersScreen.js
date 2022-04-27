@@ -1,5 +1,8 @@
+import { Container } from '@mui/material';
+import { createTheme } from '@mui/system';
 function AdminOrdersScreen() {
-  return <h1>Admin Orders</h1>;
+  const theme = createTheme();
+  return <h1> Orders Screen</h1>;
 }
 
 export default AdminOrdersScreen;

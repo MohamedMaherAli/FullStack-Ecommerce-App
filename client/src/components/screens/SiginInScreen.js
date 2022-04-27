@@ -23,24 +23,6 @@ import { useEffect } from 'react';
 //Just for early testing
 const userEmails = ['1@gmail.com', '2@gmail.com', '3@gmail.com'];
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant='body2'
-      color='text.secondary'
-      align='center'
-      {...props}
-    >
-      {'Copyright © '}
-      {/* <Link color="inherit" href="/">
-        Ecommerce App
-      </Link>{" "} */}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 const theme = createTheme();
 export default function SignIn() {
   const dispatch = useDispatch();
@@ -156,18 +138,13 @@ export default function SignIn() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
-              </Grid>
+              <Grid item xs></Grid>
               <Grid item>
                 <Link to='/user/signup'>Don't have an account? Sign Up</Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );

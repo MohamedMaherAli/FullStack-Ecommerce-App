@@ -22,6 +22,16 @@ export const getUserDetails = (id, config) =>
 export const updateUserDetails = (formData, config) =>
   API.put('/api/users/profile', formData, config);
 
+//USER ADMIN API
+export const getUserList = (config) => API.get('/api/users/', config);
+
+export const deleteUser = (id, config) =>
+  API.delete(`/api/users/${id}`, config);
+
+export const getUserById = (id, config) => API.get(`/api/users/${id}`, config);
+export const updateUserById = (id, formData, config) =>
+  API.put(`/api/users/${id}`, formData, config);
+
 //PRODUCT API
 export const getProducts = () => API.get('/api/products');
 export const getSingleProduct = (id) => API.get(`/api/products/${id}`);

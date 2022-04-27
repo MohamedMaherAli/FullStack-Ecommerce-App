@@ -1,5 +1,8 @@
+import { Container } from '@mui/material';
+import { createTheme } from '@mui/system';
 function AdminHomeScreen() {
-  return <h1>Admin Home</h1>;
+  const theme = createTheme();
+  return <h1> Home Screen</h1>;
 }
 
 export default AdminHomeScreen;

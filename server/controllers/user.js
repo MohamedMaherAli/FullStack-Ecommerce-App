@@ -117,3 +117,59 @@ export const getUsers = asyncHandler(async (req, res) => {
     throw new Error('Something went wrong');
   }
 });
+
+//@desc   delete user by id
+//@route  delete /api/users/:id
+//@access Private/Admin
+export const deleteUserById = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  if (user) {
+    await user.remove();
+    res.status(200).json({ message: 'User removed' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+//@desc   get user details
+//@route  GET /api/users/:id
+//@access Private/Admin
+export const getUserByIdAdmin = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password');
+  if (user) {
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      isAdmin: user.isAdmin,
+      email: user.email,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+//@desc   update user details
+//@route  PUT /api/users/:id
+//@access Private/Admin
+export const updateUserDetailsAdmin = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.isAdmin = req.body.isAdmin || user.isAdmin;
+    const updatedUser = await user.save();
+    res.status(200).json({
+      id: updatedUser._id,
+      name: updatedUser.name,
+      isAdmin: updatedUser.isAdmin,
+      email: updatedUser.email,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});

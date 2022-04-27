@@ -1,5 +1,8 @@
-function AdminOrdersScreen() {
-  return <h1>Admin Products</h1>;
+import { Container } from '@mui/material';
+import { createTheme } from '@mui/system';
+function AdminProductsScreen() {
+  const theme = createTheme();
+  return <h1> Products Screens</h1>;
 }
 
-export default AdminOrdersScreen;
+export default AdminProductsScreen;

@@ -5,6 +5,9 @@ import {
   getUserDetails,
   updateUserDetails,
   getUsers,
+  deleteUserById,
+  getUserByIdAdmin,
+  updateUserDetailsAdmin,
 } from '../controllers/user.js';
 import { auth, isAdmin } from '../middleware/auth.js';
 
@@ -15,5 +18,8 @@ router.post('/signup', signUp);
 router.post('/signin', signIn);
 router.get('/profile', auth, getUserDetails);
 router.put('/profile', auth, updateUserDetails);
+router.delete('/:id', auth, isAdmin, deleteUserById);
+router.get('/:id', auth, isAdmin, getUserByIdAdmin);
+router.put('/:id', auth, isAdmin, updateUserDetailsAdmin);
 
 export default router;

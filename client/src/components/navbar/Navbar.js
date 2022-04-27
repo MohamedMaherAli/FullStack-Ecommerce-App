@@ -13,7 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Grid, Badge } from '@mui/material';
 import { createTheme } from '@mui/system';
 import logo from '../../logo/logo_transparent.png';
@@ -22,6 +22,7 @@ import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { logout } from '../../actions/user';
+import { Link } from '@mui/material';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 
@@ -90,12 +91,15 @@ const NavBar = () => {
       fontSize: '20px',
     },
   };
-  return (
+  return adminUrls ? (
+    <></>
+  ) : (
     <>
       <Box
         sx={{
           wdith: '100%',
           height: '70px',
+          wdith: '100%',
           backgroundColor: adminColor,
           display: 'flex',
           borderBottom: '3px dashed #E4E6EA',
@@ -108,7 +112,36 @@ const NavBar = () => {
           <Grid container>
             <Grid item xs={2} sm={4} md={9}></Grid>
             <Grid item xs={10} sm={8} md={3} sx={{ margin: 'auto' }}>
-              <Link to='/'>Explore Admin Dashboard</Link>
+              {adminUrls ? (
+                ''
+              ) : (
+                <Typography
+                  sx={{
+                    margin: 'auto',
+                    color: 'black',
+                    paddingTop: '15px',
+                    fontWeight: 'bold',
+                    fontSize: {
+                      md: '20px',
+                      sx: '10px',
+                    },
+                  }}
+                >
+                  Explore:{' '}
+                  {adminUrls ? (
+                    <>
+                      <Link href='/'> eMerchant Store</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href='/admin/dashboard'>
+                        {' '}
+                        eMerchant admin dashboard
+                      </Link>
+                    </>
+                  )}
+                </Typography>
+              )}
             </Grid>
           </Grid>
         </Container>

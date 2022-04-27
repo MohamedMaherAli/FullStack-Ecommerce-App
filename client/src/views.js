@@ -19,6 +19,8 @@ import AdminUsersScreen from './components/adminScreens/AdminUsersScreen';
 import AdminOrdersScreen from './components/adminScreens/AdminOrdersScreen';
 import AdminHomeScreen from './components/adminScreens/AdminHomeScreen';
 import AdminProductsScreen from './components/adminScreens/AdminProductsScreen';
+import AdminTestScreen from './components/adminScreens/AdminTestScreen';
+import AdminUserEditScreen from './components/adminScreens/AdminUserEditScreen';
 
 function Views() {
   return (
@@ -27,6 +29,7 @@ function Views() {
       <Route path='/user/signin' element={<SignIn />} />
       <Route path='/user/signup' element={<SignUp />} />
 
+      {/* Protected USER routes */}
       <Route element={<ProtectedRoutes />}>
         <Route path='/shipping' element={<ShippingScreen />} />
         <Route path='/payment' element={<PaymentScreen />} />
@@ -35,6 +38,7 @@ function Views() {
         <Route path='/order/:id' element={<OrderScreen />} />
       </Route>
 
+      {/* Protected ADMIN routes */}
       <Route element={<ProtectedAdminRoutes />}>
         <Route
           path='/admin/dashboard'
@@ -51,6 +55,14 @@ function Views() {
         <Route
           path='/admin/dashboard/orders'
           element={<DashboardScreen component={<AdminOrdersScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/test'
+          element={<DashboardScreen component={<AdminTestScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/user/:id'
+          element={<DashboardScreen component={<AdminUserEditScreen />} />}
         />
       </Route>
 

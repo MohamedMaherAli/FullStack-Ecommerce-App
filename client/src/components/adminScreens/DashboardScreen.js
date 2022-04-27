@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,6 +16,10 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import { useNavigate } from 'react-router-dom';
+import { Container, Grid } from '@mui/material';
+import { Link } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
+import { useSelector } from 'react-redux';
 
 const drawerWidth = 260;
 
@@ -23,7 +27,19 @@ function DashboardScreen(props) {
   const navigate = useNavigate();
   const theme = createTheme();
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  //gathering loading values to render it in only this component
+  const userListState = useSelector((state) => state.userListReducer);
+  const deleteUser = useSelector((state) => state.userListReducer);
+  const getUser = useSelector((state) => state.userGetReducer);
+  const updateUser = useSelector((state) => state.userUpdateReducer);
+  const { loading: loadingDeleteUser } = deleteUser;
+  const { loading: loadingUserList } = userListState;
+  const { loading: loadingGetUser } = getUser;
+  const { loading: loadingUpdateUser } = updateUser;
+  const loading =
+    loadingUserList || loadingDeleteUser || loadingGetUser || loadingUpdateUser;
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -67,7 +83,10 @@ function DashboardScreen(props) {
           <ListItem>
             <IconButton
               disableRipple
-              onClick={() => navigate('/admin/dashboard')}
+              onClick={() => {
+                navigate('/admin/dashboard');
+                handleDrawerToggle();
+              }}
             >
               <HomeOutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
               <Typography variant='h5' sx={{ marginLeft: theme.spacing(1) }}>
@@ -78,7 +97,10 @@ function DashboardScreen(props) {
           <ListItem>
             <IconButton
               disableRipple
-              onClick={() => navigate('/admin/dashboard/orders')}
+              onClick={() => {
+                navigate('/admin/dashboard/orders');
+                handleDrawerToggle();
+              }}
             >
               <ShoppingCartOutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
               <Typography variant='h5' sx={{ marginLeft: theme.spacing(1) }}>
@@ -89,7 +111,10 @@ function DashboardScreen(props) {
           <ListItem>
             <IconButton
               disableRipple
-              onClick={() => navigate('/admin/dashboard/users')}
+              onClick={() => {
+                navigate('/admin/dashboard/users');
+                handleDrawerToggle();
+              }}
             >
               <PersonOutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
               <Typography variant='h5' sx={{ marginLeft: theme.spacing(1) }}>
@@ -100,7 +125,10 @@ function DashboardScreen(props) {
           <ListItem>
             <IconButton
               disableRipple
-              onClick={() => navigate('/admin/dashboard/products')}
+              onClick={() => {
+                navigate('/admin/dashboard/products');
+                handleDrawerToggle();
+              }}
             >
               <Inventory2OutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
               <Typography variant='h5' sx={{ marginLeft: theme.spacing(1) }}>
@@ -121,20 +149,44 @@ function DashboardScreen(props) {
       <CssBaseline />
       <AppBar
         elevation={0}
-        position='fixed'
+        position='absolute'
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
           backgroundColor: 'transparent',
+          borderBottom: '3px dashed #E4E6EA',
+          height: '70px',
+          [theme.breakpoints.down('md')]: {
+            height: '60px',
+          },
         }}
       >
+        <Grid container>
+          <Grid item xs={2} md={9}></Grid>
+          <Grid item xs={10} md={3}>
+            <Typography
+              sx={{
+                color: 'black',
+                paddingTop: '15px',
+                fontWeight: 'bold',
+                fontSize: '20px',
+              }}
+            >
+              Explore: <Link href='/'> eMerchant Store</Link>
+            </Typography>
+          </Grid>
+        </Grid>
         <Toolbar>
           <IconButton
             color='primary'
             aria-label='open drawer'
             edge='start'
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{
+              mr: 2,
+              mt: 2,
+              display: { sm: 'none' },
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -175,7 +227,6 @@ function DashboardScreen(props) {
               boxSizing: 'border-box',
               width: 285,
               background: '#EFF5F8',
-              marginTop: '70px',
             },
           }}
           open
@@ -187,12 +238,13 @@ function DashboardScreen(props) {
         component='main'
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          padding: '0px',
+          width: '100%',
         }}
       >
-        {props.component}
+        {loading && <LinearProgress />}
+        <Container maxWidth='xl' sx={{ marginTop: theme.spacing(15) }}>
+          {props.component}
+        </Container>
       </Box>
     </Box>
   );
