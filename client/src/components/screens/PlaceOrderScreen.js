@@ -135,7 +135,7 @@ function PlaceOrderScreen() {
                                 md={1}
                                 sx={{ margixY: { xs: '10px', md: '0' } }}
                               >
-                                <Avatar alt={item.name} src='' />
+                                <Avatar alt={item.name} src={item.image} />
                               </Grid>
                               <Grid item xs={12} md={6}>
                                 <Typography variant='body1'>

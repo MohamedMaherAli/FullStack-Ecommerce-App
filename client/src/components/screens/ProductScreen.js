@@ -13,27 +13,60 @@ import {
   FormControl,
   MenuItem,
   InputLabel,
+  Paper,
+  Chip,
+  TextField,
+  Divider,
 } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { useParams } from 'react-router-dom';
-import { productDetails } from '../../actions/product';
+import { productDetails, updateProductReview } from '../../actions/product';
+import { PRODUCT_UPDATE_REVIEW_RESET } from '../../actions/actionTypes';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 function ProductScreen() {
   let { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [value, setValue] = useState(2);
+  const [value, setValue] = useState(0);
+  const [comment, setComment] = useState('');
   const [qty, setQty] = useState(1);
 
   const { product, loading, error } = useSelector(
     (state) => state.productDetailsReducer
   );
 
+  const productReviewState = useSelector(
+    (state) => state.productUpdateReviewReducer
+  );
+
+  const userLoggedIn = useSelector((state) => state.userLoginReducer);
+  const { userInfo } = userLoggedIn;
+  const {
+    loading: loadingUpdateReview,
+    success: successProductReview,
+    error: errorProductReview,
+  } = productReviewState;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateProductReview(id, { rating: value, comment }));
+  };
+
   useEffect(() => {
     dispatch(productDetails(id));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (successProductReview) {
+      setValue(0);
+      setComment('');
+      dispatch({ type: PRODUCT_UPDATE_REVIEW_RESET });
+    }
+    dispatch(productDetails(id));
+  }, [dispatch, successProductReview]);
 
   const addToCartHandler = () => {
     navigate(`/cart/${id}?qty=${qty}`);
@@ -62,17 +95,17 @@ function ProductScreen() {
             <Box
               component='img'
               alt='pillow'
-              src='https://demo.saleor.io/_next/image?url=https%3A%2F%2Fdemo.saleor.io%2Fmedia%2Fproducts%2Fsaleordemoproduct_cuschion01.png&w=1920&q=75'
+              src={product.image}
               sx={{
                 objectFit: 'contain',
                 width: '100%',
-                maxHeight: { xs: 360, md: 1000 },
-                maxWidth: { xs: 360, md: 1000 },
+                maxHeight: { xs: 360, md: 600 },
+                maxWidth: { xs: 360, md: 600 },
                 marginLeft: 'auto',
                 marginRight: 'auto',
                 display: 'block',
               }}
-            ></Box>
+            />
           </Grid>
           <Grid item xs={12} xl={4} sx={{ marginTop: theme.spacing(4) }}>
             <List>
@@ -125,13 +158,11 @@ function ProductScreen() {
               </ListItem>
               <ListItem>
                 <Rating
-                  name='simple-controlled'
-                  value={value}
+                  readOnly
+                  value={product.rating}
                   sx={{ marginLeft: '-4px' }}
-                  onChange={(event, newValue) => {
-                    setValue(newValue);
-                  }}
                 />
+                <Typography>({product.numReviews} reviews)</Typography>
               </ListItem>
               {product.countInStock > 0 && (
                 <ListItem>
@@ -165,6 +196,149 @@ function ProductScreen() {
                 </Button>
               </ListItem>
             </List>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Paper
+              elevation={0}
+              sx={{
+                marginTop: theme.spacing(3),
+                padding: theme.spacing(2),
+              }}
+            >
+              <Typography
+                variant='h2'
+                sx={{
+                  fontSize: { md: '30px', xs: '20px' },
+                  fontWeight: 'bold',
+                  letterSpacing: '4px',
+                  marginBottom: theme.spacing(3),
+                }}
+              >
+                Reviews
+              </Typography>
+              {product.reviews.length === 0 ? (
+                <>
+                  <Alert severity='info'>No reviews for this product</Alert>
+                </>
+              ) : (
+                <>
+                  <Box
+                    sx={{
+                      padding: theme.spacing(2),
+                      borderRadius: '10px',
+                      backgroundColor: '#F3F4F6',
+                    }}
+                  >
+                    {product.reviews.map((review, idx) => (
+                      <>
+                        <Box key={uuidv4()}>
+                          <Typography>{review.name}</Typography>
+                          <Rating
+                            readOnly
+                            value={review.rating}
+                            sx={{ marginLeft: '-4px' }}
+                          />
+                          <Typography>{review.comment}</Typography>
+                          <Chip
+                            label={review.createdAt.substring(0, 10)}
+                            color='info'
+                            sx={{ marginTop: '5px', padding: '2px' }}
+                          />
+                        </Box>
+                        {idx < product.reviews.length - 1 ? (
+                          <Divider
+                            key={uuidv4()}
+                            sx={{ marginY: theme.spacing(1) }}
+                          />
+                        ) : null}
+                      </>
+                    ))}
+                  </Box>
+                </>
+              )}
+              {userInfo ? (
+                <Paper
+                  elevation={3}
+                  sx={{
+                    padding: theme.spacing(3),
+                    marginTop: theme.spacing(3),
+                    backgroundColor: '#F3F4F6',
+                  }}
+                >
+                  <Box
+                    component='form'
+                    sx={{ marginTop: theme.spacing(2) }}
+                    onSubmit={handleSubmit}
+                  >
+                    <Typography
+                      variant='h3'
+                      sx={{
+                        fontSize: { md: '25px', xs: '15px' },
+                        fontWeight: 'bold',
+                        letterSpacing: '2px',
+                        marginBottom: theme.spacing(3),
+                      }}
+                    >
+                      Submit a Review
+                    </Typography>
+                    {loadingUpdateReview ? (
+                      <CircularProgress
+                        sx={{ marginLeft: '45%', display: 'block' }}
+                      />
+                    ) : null}
+                    {errorProductReview ? (
+                      <Alert
+                        severity='error'
+                        sx={{ marginY: theme.spacing(1) }}
+                      >
+                        {errorProductReview}
+                      </Alert>
+                    ) : null}
+                    {successProductReview ? (
+                      <Alert
+                        severity='success'
+                        sx={{ marginY: theme.spacing(1) }}
+                      >
+                        Review submitted
+                      </Alert>
+                    ) : null}
+                    <Rating
+                      name='simple-controlled'
+                      value={value}
+                      sx={{ marginLeft: '-4px' }}
+                      onChange={(event, newValue) => {
+                        setValue(newValue);
+                      }}
+                    />
+                    <TextField
+                      onChange={(e) => setComment(e.target.value)}
+                      label='Comment'
+                      fullWidth
+                      sx={{ display: 'block' }}
+                    />
+                    <Button
+                      variant='contained'
+                      disableElevation
+                      type='submit'
+                      disabled={loadingUpdateReview}
+                      sx={{
+                        marginTop: theme.spacing(2),
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                </Paper>
+              ) : (
+                <>
+                  <Alert severity='info'>
+                    Please log in to submit a review
+                  </Alert>
+                </>
+              )}
+            </Paper>
           </Grid>
         </Grid>
       )}

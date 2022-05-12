@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import morgan from 'morgan';
 import userRoutes from './routes/user.js';
 import productRoutes from './routes/product.js';
 import orderRoutes from './routes/order.js';
@@ -11,6 +12,10 @@ import { notFound, errorHandler } from './middleware/error.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_CONNECTION = process.env.MONGO_CONNECTION;
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 //cors config
 app.use(cors());

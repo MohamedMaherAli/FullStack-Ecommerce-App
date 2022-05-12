@@ -3,10 +3,15 @@ import axios from 'axios';
 import { PayPalButton } from 'react-paypal-button-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
-import { getOrderDetails, updateOrderToPaid } from '../../actions/order';
+import {
+  getOrderDetails,
+  updateOrderToPaid,
+  updateToDelivered,
+} from '../../actions/order';
 import { createTheme } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { Box } from '@mui/system';
+import { ORDER_UPDATE_DELIVERED_RESET } from '../../actions/actionTypes';
 import {
   CircularProgress,
   Grid,
@@ -18,6 +23,8 @@ import {
   Alert,
   Avatar,
   AlertTitle,
+  Button,
+  FormHelperText,
 } from '@mui/material';
 
 function OrderScreen() {
@@ -29,9 +36,18 @@ function OrderScreen() {
     (state) => state.orderDetailsReducer
   );
 
+  // check if userLoggedIn same as user who owns order, to show pay button or hide it
+  const userLoggedIn = useSelector((state) => state.userLoginReducer);
+
   const { loading: loadingPay, success: successPay } = useSelector(
     (state) => state.orderPayReducer
   );
+
+  const {
+    loading: loadingDeliver,
+    success: successDeliver,
+    error: errorDeliver,
+  } = useSelector((state) => state.orderUpdateToDeliveredReducer);
 
   useEffect(() => {
     const addPayPalScript = async () => {
@@ -46,7 +62,8 @@ function OrderScreen() {
       document.appendChild(script);
     };
 
-    if (!order || successPay) {
+    if (!order || successPay || successDeliver) {
+      dispatch({ type: ORDER_UPDATE_DELIVERED_RESET });
       dispatch(getOrderDetails(id));
     } else if (!order.isPaid) {
       if (!window.paypal) {
@@ -55,11 +72,14 @@ function OrderScreen() {
         setSdkReady(true);
       }
     }
-  }, [dispatch, id, successPay]);
+  }, [dispatch, id, successPay, successDeliver]);
 
   const successPaymentHandler = (paymentResult) => {
-    console.log(paymentResult);
     dispatch(updateOrderToPaid(id, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(updateToDelivered(id));
   };
 
   const theme = createTheme();
@@ -151,7 +171,7 @@ function OrderScreen() {
                       <>
                         <Alert severity='info'>
                           <AlertTitle>Delivered Order</AlertTitle>
-                          This message to just let you know that your order —{' '}
+                          This message just to inform you that your order —{' '}
                           <strong>is delivered on {order.delieveredAt}</strong>
                         </Alert>
                       </>
@@ -159,7 +179,7 @@ function OrderScreen() {
                       <>
                         <Alert severity='warning'>
                           <AlertTitle>Not Delivered Order</AlertTitle>
-                          This message to just let you know that your order is —{' '}
+                          This message just to inform you that your order is —{' '}
                           <strong>not delivered!</strong>
                         </Alert>
                       </>
@@ -178,15 +198,17 @@ function OrderScreen() {
                       <>
                         <Alert severity='info'>
                           <AlertTitle>Paid Order</AlertTitle>
-                          This message to just let you know that your order —{' '}
-                          <strong>is paid on {order.paidAt}</strong>
+                          This message just to inform you that your order —{' '}
+                          <strong>
+                            is paid at {order.paidAt.substring(0, 10)}
+                          </strong>
                         </Alert>
                       </>
                     ) : (
                       <>
                         <Alert severity='warning'>
                           <AlertTitle>Not Paid Order</AlertTitle>
-                          This message to just let you know that your order is —{' '}
+                          This message just to inform you that your order is —{' '}
                           <strong>not paid!</strong>
                         </Alert>
                       </>
@@ -210,7 +232,7 @@ function OrderScreen() {
                                 md={1}
                                 sx={{ margixY: { xs: '10px', md: '0' } }}
                               >
-                                <Avatar alt={item.name} src='' />
+                                <Avatar alt={item.name} src={item.image} />
                               </Grid>
                               <Grid item xs={12} md={6}>
                                 <Typography variant='body1'>
@@ -331,23 +353,64 @@ function OrderScreen() {
                     </ListItem>
                   ) : (
                     <ListItem>
-                      <Box sx={{ width: '400px' }}>
-                        <PayPalButton
-                          amount={order.totalPrice}
-                          onSuccess={successPaymentHandler}
-                          style={{
-                            color: 'blue',
-                            shape: 'pill',
-                            layout: 'vertical',
-                          }}
-                        />
-                      </Box>
+                      <>
+                        <Box sx={{ width: '400px' }}>
+                          <PayPalButton
+                            amount={order.totalPrice}
+                            onSuccess={successPaymentHandler}
+                            style={{
+                              color: 'blue',
+                              shape: 'pill',
+                              layout: 'vertical',
+                            }}
+                          />
+                        </Box>
+                      </>
                     </ListItem>
                   )}
                 </>
               )}
             </List>
           </Paper>
+          {loadingDeliver ? (
+            <>
+              <CircularProgress
+                sx={{ marginTop: theme.spacing(2), marginLeft: '45%' }}
+              />
+            </>
+          ) : null}
+          {errorDeliver ? (
+            <>
+              <Alert severity='error' sx={{ marginTop: theme.spacing(2) }}>
+                {errorDeliver}
+              </Alert>
+            </>
+          ) : null}
+          {userLoggedIn.userInfo.isAdmin === true ? (
+            <>
+              <Button
+                size='large'
+                variant='contained'
+                color='success'
+                disableElevation
+                fullWidth
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: '17px',
+                  textTransform: 'none',
+                  marginTop: theme.spacing(3),
+                  padding: theme.spacing(2),
+                }}
+                onClick={deliverHandler}
+                disabled={order.isDelievered}
+              >
+                Mark as Delivered
+              </Button>
+              <FormHelperText sx={{ color: 'red', textAlign: 'center' }}>
+                This button appears for admins only
+              </FormHelperText>
+            </>
+          ) : null}
         </Grid>
       </Grid>
     </>

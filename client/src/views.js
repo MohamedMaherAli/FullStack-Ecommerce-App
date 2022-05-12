@@ -19,8 +19,11 @@ import AdminUsersScreen from './components/adminScreens/AdminUsersScreen';
 import AdminOrdersScreen from './components/adminScreens/AdminOrdersScreen';
 import AdminHomeScreen from './components/adminScreens/AdminHomeScreen';
 import AdminProductsScreen from './components/adminScreens/AdminProductsScreen';
-import AdminTestScreen from './components/adminScreens/AdminTestScreen';
 import AdminUserEditScreen from './components/adminScreens/AdminUserEditScreen';
+import AdminCreateProductScreen from './components/adminScreens/AdminCreateProductScreen';
+import AdminEditPRoductScreen from './components/adminScreens/AdminEditProductScreen';
+import SearchScreen from './components/screens/SearchScreen';
+import CategoryScreen from './components/screens/CategoryScreen';
 
 function Views() {
   return (
@@ -28,6 +31,19 @@ function Views() {
       <Route path='/' element={<Home />}></Route>
       <Route path='/user/signin' element={<SignIn />} />
       <Route path='/user/signup' element={<SignUp />} />
+      <Route path='/search' element={<SearchScreen />} />
+      <Route
+        path='/category/accessories'
+        element={<CategoryScreen category='accessories' />}
+      />
+      <Route
+        path='/category/groceries'
+        element={<CategoryScreen category='groceries' />}
+      />
+      <Route
+        path='/category/clothing'
+        element={<CategoryScreen category='clothing' />}
+      />
 
       {/* Protected USER routes */}
       <Route element={<ProtectedRoutes />}>
@@ -41,7 +57,7 @@ function Views() {
       {/* Protected ADMIN routes */}
       <Route element={<ProtectedAdminRoutes />}>
         <Route
-          path='/admin/dashboard'
+          path='/admin/dashboard/'
           element={<DashboardScreen component={<AdminHomeScreen />} />}
         />
         <Route
@@ -57,12 +73,16 @@ function Views() {
           element={<DashboardScreen component={<AdminOrdersScreen />} />}
         />
         <Route
-          path='/admin/dashboard/test'
-          element={<DashboardScreen component={<AdminTestScreen />} />}
-        />
-        <Route
           path='/admin/dashboard/user/:id'
           element={<DashboardScreen component={<AdminUserEditScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/products/create'
+          element={<DashboardScreen component={<AdminCreateProductScreen />} />}
+        />
+        <Route
+          path='/admin/dashboard/product/:id'
+          element={<DashboardScreen component={<AdminEditPRoductScreen />} />}
         />
       </Route>
 

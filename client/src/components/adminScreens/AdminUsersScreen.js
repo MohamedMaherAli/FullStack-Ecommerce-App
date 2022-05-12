@@ -33,11 +33,7 @@ function AdminUsersScreen() {
   const userList = useSelector((state) => state.userListReducer);
   const { loading, error, users } = userList;
   const deleteUserState = useSelector((state) => state.userDeleteReducer);
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = deleteUserState;
+  const { error: errorDelete, success: successDelete } = deleteUserState;
 
   const columns = [
     { field: '_id', headerName: 'ID', width: 300, sortable: false },
@@ -60,7 +56,7 @@ function AdminUsersScreen() {
       headerName: 'Edit',
       description: 'Edit user',
       sortable: false,
-      width: 160,
+      width: 100,
       renderCell: (params) => {
         return (
           <IconButton
@@ -78,7 +74,7 @@ function AdminUsersScreen() {
       headerName: 'Delete',
       description: 'Delete user',
       sortable: false,
-      width: 160,
+      width: 100,
       renderCell: (params) => {
         return (
           <IconButton onClick={() => dispatch(deleteUser(params.row._id))}>
@@ -96,7 +92,7 @@ function AdminUsersScreen() {
   if (loading) return;
   if (error) return <Alert security='error'>{error}</Alert>;
   return (
-    <>
+    <Box sx={{ marginBottom: theme.spacing(4) }}>
       <Box
         sx={{
           display: 'flex',
@@ -113,24 +109,12 @@ function AdminUsersScreen() {
           sx={{
             fontWeight: 'bold',
             marginBottom: theme.spacing(2),
-            fontSize: { md: '30px', xs: '20px' },
+            fontWeight: 700,
+            fontSize: { md: '45px', xs: '20px' },
           }}
         >
           Users
         </Typography>
-        <Button
-          variant='outlined'
-          size='large'
-          sx={{
-            marginBottom: theme.spacing(2),
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-          elevation={0}
-          onClick={() => alert('should create an admin')}
-        >
-          Create Admin
-        </Button>
       </Box>
       <Paper elevation={0}>
         <div style={{ height: 800, width: '100%' }}>
@@ -148,6 +132,9 @@ function AdminUsersScreen() {
               padding: theme.spacing(3),
               fontSize: '20px',
               border: 'none',
+              [theme.breakpoints.down('md')]: {
+                '& .MuiDataGrid-columnHeader': {},
+              },
             }}
           />
         </div>
@@ -178,7 +165,7 @@ function AdminUsersScreen() {
       ) : (
         <></>
       )}
-    </>
+    </Box>
   );
 }
 

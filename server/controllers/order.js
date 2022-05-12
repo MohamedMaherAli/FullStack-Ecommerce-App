@@ -80,6 +80,27 @@ export const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
+//@des update order to Delievred
+//@route put /api/orders/:id/deliver
+//@access ADMIN/Private
+export const updateOrderToDelivered = asyncHandler(async (req, res) => {
+  const orderId = req.params.id;
+  if (!mongoose.Types.ObjectId.isValid(orderId) || !orderId) {
+    res.status(400);
+    throw new Error('Order id is not valid');
+  }
+  const order = await Order.findById(orderId);
+  if (order) {
+    order.isDelievered = true;
+    order.delieveredAt = Date.now();
+    const updatedOrder = await order.save();
+    res.status(200).json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order is not found');
+  }
+});
+
 //@desc get logged in user orders
 //@route GET /orders/myorders
 //@access Private
@@ -98,4 +119,13 @@ export const loggInUserOrders = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User is not found');
   }
+});
+
+//@desc  get all orders
+//@route GET /orders/
+//@access Private
+
+export const getOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({}).populate('user');
+  res.status(200).json(orders);
 });

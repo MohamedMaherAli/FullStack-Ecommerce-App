@@ -2,15 +2,6 @@ import axios from 'axios';
 
 const API = axios.create({ baseURL: 'http://localhost:5000' });
 
-API.interceptors.request.use((req) => {
-  if (localStorage.getItem('User')) {
-    req.headers.authorization = `Bearer ${
-      JSON.parse(localStorage.getItem('User')).token
-    }`;
-  }
-  return req;
-});
-
 //USER API
 export const signUp = (formData, config) =>
   API.post('/api/users/signup', formData, config);
@@ -33,8 +24,25 @@ export const updateUserById = (id, formData, config) =>
   API.put(`/api/users/${id}`, formData, config);
 
 //PRODUCT API
-export const getProducts = () => API.get('/api/products');
+export const getProducts = (searchKeyword) =>
+  API.get(`/api/products?searchKeyword=${searchKeyword}`);
+
+export const categoryProductList = (category, pageNumber) =>
+  API.get(`/api/products/category/${category}?page=${pageNumber}`);
+
 export const getSingleProduct = (id) => API.get(`/api/products/${id}`);
+export const updateProductReview = (id, formData, config) =>
+  API.post(`/api/products/${id}/reviews`, formData, config);
+
+//PRODUCT ADMIN API
+export const deleteProductById = (id, config) =>
+  API.delete(`/api/products/${id}`, config);
+
+export const createNewProduct = (formData, config) =>
+  API.post(`/api/products/new`, formData, config);
+
+export const updateProduct = (id, formData, config) =>
+  API.put(`api/products/${id}`, formData, config);
 
 //ORDER API
 export const addOrders = (orderData, config) =>
@@ -48,3 +56,9 @@ export const updateOrderToPaid = (id, paymentResult, config) =>
 
 export const getLoggedInUserOrders = (config) =>
   API.get('/api/orders/myorders', config);
+
+//ORDER ADMIN API
+export const getAllOrders = (config) => API.get('/api/orders/', config);
+
+export const updateToDelivered = (id, config) =>
+  API.put(`/api/orders/${id}/deliver`, config);

@@ -22,7 +22,11 @@ export const signIn = asyncHandler(async (req, res) => {
     throw new Error('Invalid credentials');
   }
 
-  const token = generateToken(existingUser._id, existingUser.isAdmin);
+  const token = generateToken(
+    existingUser._id,
+    existingUser.isAdmin,
+    existingUser.name
+  );
 
   res.status(200).json({
     id: existingUser._id,
@@ -50,7 +54,7 @@ export const signUp = asyncHandler(async (req, res) => {
     password,
   });
   await user.save();
-  const token = generateToken(user._id, user.isAdmin);
+  const token = generateToken(user._id, user.isAdmin, user.name);
   res.status(201).json({
     id: user._id,
     name: user.name,

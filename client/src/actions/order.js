@@ -12,9 +12,16 @@ import {
   ORDER_MY_LIST_REQUEST,
   ORDER_MY_LIST_SUCCESS,
   ORDER_MY_LIST_FAILS,
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_SUCCESS,
+  ORDER_LIST_FAILS,
+  ORDER_UPDATE_DELIVERED_REQUEST,
+  ORDER_UPDATE_DELIVERED_SUCCESS,
+  ORDER_UPDATE_DELIVERED_FAILS,
 } from './actionTypes';
 
 import * as api from '../api/index';
+import axios from 'axios';
 
 export const createOrder = (orderData) => async (dispatch, getState) => {
   try {
@@ -106,6 +113,44 @@ export const getLoggedInUserOrders = () => async (dispatch, getState) => {
       type: ORDER_MY_LIST_FAILS,
       payload:
         error.respone && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getAllOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_LIST_REQUEST });
+    const token = getState().userLoginReducer.userInfo.token;
+    const config = { headers: { authorization: `Bearer ${token}` } };
+    const { data } = await api.getAllOrders(config);
+    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ORDER_LIST_FAILS,
+      payload:
+        error.response && error.respone.data.message
+          ? error.respone.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateToDelivered = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_UPDATE_DELIVERED_REQUEST });
+    const token = getState().userLoginReducer.userInfo.token;
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const { data } = await api.updateToDelivered(id, config);
+    dispatch({ type: ORDER_UPDATE_DELIVERED_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ORDER_UPDATE_DELIVERED_FAILS,
+      payload:
+        error.response && error.response.data.message
           ? error.response.data.message
           : error.message,
     });

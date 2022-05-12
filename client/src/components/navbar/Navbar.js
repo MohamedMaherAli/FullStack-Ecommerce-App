@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,21 +16,20 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Grid, Badge } from '@mui/material';
 import { createTheme } from '@mui/system';
-import logo from '../../logo/logo_transparent.png';
-import logoMobile from '../../logo/logo_transparent-2.png';
+import logo from '../../logo/emerchant.svg';
+import logoMobile from '../../logo/emerchant.svg';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { logout } from '../../actions/user';
 import { Link } from '@mui/material';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Accessories', 'Groceries', 'Clothing'];
 
 const NavBar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-
   const adminUrls = location.pathname.startsWith('/admin/');
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -91,15 +90,13 @@ const NavBar = () => {
       fontSize: '20px',
     },
   };
-  return adminUrls ? (
-    <></>
-  ) : (
+  return adminUrls ? null : (
     <>
       <Box
         sx={{
           wdith: '100%',
           height: '70px',
-          wdith: '100%',
+          width: '100%',
           backgroundColor: adminColor,
           display: 'flex',
           borderBottom: '3px dashed #E4E6EA',
@@ -154,17 +151,15 @@ const NavBar = () => {
             elevation={0}
           >
             <Container maxWidth='xl'>
-              <Toolbar
-                disableGutters
-                sx={{ color: 'black', overflow: 'hidden' }}
-              >
+              <Toolbar disableGutters sx={{ color: 'black' }}>
                 <IconButton disableRipple onClick={() => navigate('/')}>
                   <Box
                     component='img'
                     src={logo}
                     sx={{
                       objectFit: 'cover',
-                      height: '35px',
+                      height: '25px',
+                      maxwidth: '120px',
                       mr: 2,
                       display: { xs: 'none', md: 'flex' },
                     }}
@@ -199,34 +194,56 @@ const NavBar = () => {
                       display: { xs: 'block', md: 'none' },
                     }}
                   >
+                    {/* ssssssssssssssssssssssss */}
                     {pages.map((page) => (
                       <MenuItem key={page} onClick={handleCloseNavMenu}>
-                        <Typography textAlign='center' sx={{ color: 'black' }}>
+                        <Button
+                          textAlign='center'
+                          sx={{ color: 'black', textTransform: 'none' }}
+                          onClick={() =>
+                            navigate(`/category/${page.toLowerCase()}`)
+                          }
+                        >
                           {page}
-                        </Typography>
+                        </Button>
                       </MenuItem>
                     ))}
                   </Menu>
                 </Box>
 
-                <Box
-                  component='img'
-                  src={logoMobile}
-                  sx={{
-                    objectFit: 'cover',
-                    maxHeight: '40px',
-                    mr: 2,
-                    flexGrow: 10,
-                    display: { xs: 'flex', md: 'none' },
-                  }}
-                />
+                <IconButton
+                  disableRipple
+                  onClick={() => navigate('/')}
+                  sx={{ marginRight: { md: '0px', xs: '20%' } }}
+                >
+                  <Box
+                    component='img'
+                    src={logoMobile}
+                    sx={{
+                      maxHeight: '40px',
+                      maxWidth: '90px',
+                      display: { xs: 'flex', md: 'none' },
+                      marginRight: '30%',
+                    }}
+                  />
+                </IconButton>
 
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                   {pages.map((page) => (
                     <Button
                       key={page}
-                      onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: 'black', display: 'block' }}
+                      disableRipple
+                      onClick={() => {
+                        navigate(`/category/${page.toLowerCase()}`);
+                        handleCloseNavMenu();
+                      }}
+                      sx={{
+                        my: 2,
+                        color: 'black',
+                        display: 'block',
+                        textTransform: 'none',
+                        fontSize: '15px',
+                      }}
                     >
                       {page}
                     </Button>
@@ -236,71 +253,100 @@ const NavBar = () => {
                 <Box
                   sx={{
                     flexGrow: 0,
+                    display: 'flex',
+                    overflow: 'hidden',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: '100px',
                   }}
                 >
-                  <Tooltip title={user ? 'Open Profile' : 'sign in'}>
-                    <IconButton
-                      onClick={
-                        user ? handleOpenUserMenu : handleNavigationToSignInPage
-                      }
-                      sx={{ p: 0 }}
-                      disableRipple
+                  <Box>
+                    <Tooltip title={user ? 'Open Profile' : 'sign in'}>
+                      <IconButton
+                        onClick={
+                          user
+                            ? handleOpenUserMenu
+                            : handleNavigationToSignInPage
+                        }
+                        sx={{ p: 0 }}
+                        disableRipple
+                      >
+                        <AccountCircleOutlinedIcon sx={navBarSideIconStyles} />{' '}
+                        {user ? (
+                          <Typography
+                            fontSize='medium'
+                            sx={{ display: { md: 'inline', xs: 'none' } }}
+                          >
+                            {user.name}
+                          </Typography>
+                        ) : null}
+                        {!user ? (
+                          <Typography
+                            fontSize='medium'
+                            sx={{ display: { md: 'inline', xs: 'none' } }}
+                          >
+                            Log in
+                          </Typography>
+                        ) : null}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <Box>
+                    <Tooltip title='Open Cart'>
+                      <IconButton
+                        onClick={() => navigate('/cart')}
+                        disableRipple
+                      >
+                        <StyledBadge
+                          fontSize='medium'
+                          badgeContent={NumberItemsInCart || 0}
+                          color='primary'
+                        >
+                          <ShoppingCartIcon sx={navBarSideIconStyles} />
+                        </StyledBadge>
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <Box>
+                    <Tooltip title='Search Products'>
+                      <IconButton
+                        disableRipple
+                        onClick={() => navigate('/search')}
+                      >
+                        <SearchOutlinedIcon sx={navBarSideIconStyles} />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      sx={{ mt: '45px' }}
+                      id='menu-appbar'
+                      anchorEl={anchorElUser}
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      open={Boolean(anchorElUser)}
+                      onClose={handleCloseUserMenu}
                     >
-                      <AccountCircleOutlinedIcon sx={navBarSideIconStyles} />{' '}
-                      {user ? (
-                        <Typography fontSize='medium'>{user.name}</Typography>
-                      ) : null}
-                      {!user ? (
-                        <Typography fontSize='medium'>Log in</Typography>
-                      ) : null}
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title='Open Cart'>
-                    <IconButton onClick={() => navigate('/cart')} disableRipple>
-                      <StyledBadge
-                        fontSize='medium'
-                        badgeContent={NumberItemsInCart || 0}
-                        color='primary'
-                      >
-                        <ShoppingCartIcon />
-                      </StyledBadge>
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title='Search Products'>
-                    <IconButton disableRipple>
-                      <SearchOutlinedIcon sx={navBarSideIconStyles} />
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    sx={{ mt: '45px' }}
-                    id='menu-appbar'
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
-                  >
-                    {settings.map((setting) => (
-                      <MenuItem
-                        key={uuidv4()}
-                        onClick={() => {
-                          handleCloseUserMenu();
-                          setting.handle();
-                        }}
-                      >
-                        <Typography textAlign='center'>
-                          {setting.name}
-                        </Typography>
-                      </MenuItem>
-                    ))}
-                  </Menu>
+                      {settings.map((setting) => (
+                        <MenuItem
+                          key={uuidv4()}
+                          onClick={() => {
+                            handleCloseUserMenu();
+                            setting.handle();
+                          }}
+                        >
+                          <Typography textAlign='center'>
+                            {setting.name}
+                          </Typography>
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </Box>
                 </Box>
               </Toolbar>
             </Container>

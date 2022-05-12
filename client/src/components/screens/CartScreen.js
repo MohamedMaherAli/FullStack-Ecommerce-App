@@ -20,7 +20,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Box } from '@mui/system';
 import { createTheme } from '@mui/system';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function CartScreen() {
   const dispatch = useDispatch();
@@ -43,9 +43,6 @@ function CartScreen() {
   const removeCardHandler = (id) => {
     dispatch(removeFromCart(id));
   };
-
-  const isLoggedIn =
-    useSelector((state) => state.userLoginReducer.userInfo) !== null;
 
   const theme = createTheme();
   return (
@@ -96,7 +93,7 @@ function CartScreen() {
                           height: '250px',
                           backgroundColor: 'white',
                         }}
-                        src='https://demo.saleor.io/_next/image?url=https%3A%2F%2Fdemo.saleor.io%2Fmedia%2Fproducts%2Fsaleordemoproduct_cuschion01.png&w=1920&q=75'
+                        src={item.image}
                       />
                       <Box
                         key={uuidv4()}
@@ -239,11 +236,8 @@ function CartScreen() {
                 >
                   Shipping
                 </Typography>
-                <Typography
-                  gutterBottom
-                  sx={{ fontWeight: 'bold', fontSize: '20px' }}
-                >
-                  50$
+                <Typography gutterBottom sx={{ fontSize: '15px' }}>
+                  to be calculated
                 </Typography>
               </ListItem>
               <ListItem
@@ -256,11 +250,8 @@ function CartScreen() {
                 >
                   Tax
                 </Typography>
-                <Typography
-                  gutterBottom
-                  sx={{ fontWeight: 'bold', fontSize: '20px' }}
-                >
-                  10$
+                <Typography gutterBottom sx={{ fontSize: '15px' }}>
+                  to be calculated
                 </Typography>
               </ListItem>
               <Divider />

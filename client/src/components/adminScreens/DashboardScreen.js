@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,7 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import { useNavigate } from 'react-router-dom';
-import { Container, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { Link } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useSelector } from 'react-redux';
@@ -34,12 +34,31 @@ function DashboardScreen(props) {
   const deleteUser = useSelector((state) => state.userListReducer);
   const getUser = useSelector((state) => state.userGetReducer);
   const updateUser = useSelector((state) => state.userUpdateReducer);
+  const productList = useSelector((state) => state.productListReducer);
+  const productDelete = useSelector((state) => state.productDeleteReducer);
+  const productCreate = useSelector((state) => state.productCreateReducer);
+  const productDetails = useSelector((state) => state.productDetailsReducer);
+  const ordersList = useSelector((state) => state.orderListReducer);
+
   const { loading: loadingDeleteUser } = deleteUser;
   const { loading: loadingUserList } = userListState;
   const { loading: loadingGetUser } = getUser;
   const { loading: loadingUpdateUser } = updateUser;
+  const { loading: loadingProductList } = productList;
+  const { loading: loadingProductDelete } = productDelete;
+  const { loading: loadingProductCreate } = productCreate;
+  const { loading: loadingProductDetails } = productDetails;
+  const { loading: loadingOrdersList } = ordersList;
   const loading =
-    loadingUserList || loadingDeleteUser || loadingGetUser || loadingUpdateUser;
+    loadingOrdersList ||
+    loadingProductDetails ||
+    loadingProductCreate ||
+    loadingProductDelete ||
+    loadingUserList ||
+    loadingDeleteUser ||
+    loadingGetUser ||
+    loadingUpdateUser ||
+    loadingProductList;
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -84,8 +103,10 @@ function DashboardScreen(props) {
             <IconButton
               disableRipple
               onClick={() => {
-                navigate('/admin/dashboard');
-                handleDrawerToggle();
+                navigate('/admin/dashboard/');
+                if (mobileOpen) {
+                  handleDrawerToggle();
+                }
               }}
             >
               <HomeOutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
@@ -99,7 +120,9 @@ function DashboardScreen(props) {
               disableRipple
               onClick={() => {
                 navigate('/admin/dashboard/orders');
-                handleDrawerToggle();
+                if (mobileOpen) {
+                  handleDrawerToggle();
+                }
               }}
             >
               <ShoppingCartOutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
@@ -113,7 +136,9 @@ function DashboardScreen(props) {
               disableRipple
               onClick={() => {
                 navigate('/admin/dashboard/users');
-                handleDrawerToggle();
+                if (mobileOpen) {
+                  handleDrawerToggle();
+                }
               }}
             >
               <PersonOutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
@@ -127,7 +152,9 @@ function DashboardScreen(props) {
               disableRipple
               onClick={() => {
                 navigate('/admin/dashboard/products');
-                handleDrawerToggle();
+                if (mobileOpen) {
+                  handleDrawerToggle();
+                }
               }}
             >
               <Inventory2OutlinedIcon sx={{ fontSize: { md: 35, sx: 30 } }} />
@@ -145,12 +172,14 @@ function DashboardScreen(props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', width: '100%' }}>
       <CssBaseline />
       <AppBar
         elevation={0}
         position='absolute'
         sx={{
+          left: 0,
+          right: 0,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
           backgroundColor: 'transparent',
@@ -162,7 +191,9 @@ function DashboardScreen(props) {
         }}
       >
         <Grid container>
-          <Grid item xs={2} md={9}></Grid>
+          <Grid item xs={2} md={9}>
+            {''}
+          </Grid>
           <Grid item xs={10} md={3}>
             <Typography
               sx={{
@@ -227,6 +258,7 @@ function DashboardScreen(props) {
               boxSizing: 'border-box',
               width: 285,
               background: '#EFF5F8',
+              overflowX: 'hidden',
             },
           }}
           open
@@ -238,13 +270,12 @@ function DashboardScreen(props) {
         component='main'
         sx={{
           flexGrow: 1,
-          width: '100%',
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          marginX: theme.spacing(2),
         }}
       >
         {loading && <LinearProgress />}
-        <Container maxWidth='xl' sx={{ marginTop: theme.spacing(15) }}>
-          {props.component}
-        </Container>
+        <Box sx={{ marginTop: theme.spacing(15) }}>{props.component}</Box>
       </Box>
     </Box>
   );
