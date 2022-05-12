@@ -9,7 +9,7 @@ const useAuth = () => {
 
 const useAdmin = () => {
   const isAdmin = useSelector(
-    (state) => state.userLoginReducer.userInfo.isAdmin
+    (state) => state.userLoginReducer?.userInfo?.isAdmin
   );
   return isAdmin;
 };

@@ -86,8 +86,6 @@ function AdminCreateProductScreen() {
     }
   }, [successUpdate, errorUpdate, dispatch]);
 
-  console.log(onSale);
-
   const formik = useFormik({
     initialValues: {
       name: '',

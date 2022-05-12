@@ -30,8 +30,6 @@ function SearchScreen() {
   const productState = useSelector((state) => state.productListReducer);
   const { loading, products, error } = productState;
 
-  console.log(products);
-
   useEffect(() => {
     dispatch(listProducts(searchTerm));
   }, [dispatch, searchTerm]);

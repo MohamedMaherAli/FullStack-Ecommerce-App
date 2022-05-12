@@ -44,7 +44,6 @@ export const getCategoryProducts = asyncHandler(async (req, res) => {
 
     res.status(200).json({ products });
   } else {
-    console.log(page);
     const count = await Product.countDocuments({ mainCategory: category });
     const products = await Product.find({ mainCategory: category })
       .limit(pageSize)
