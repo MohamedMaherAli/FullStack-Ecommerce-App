@@ -107,7 +107,7 @@ function ProductScreen() {
               }}
             />
           </Grid>
-          <Grid item xs={12} xl={4} sx={{ marginTop: theme.spacing(4) }}>
+          <Grid item xs={12} md={4} sx={{ marginTop: theme.spacing(4) }}>
             <List>
               <ListItem>
                 <Typography
