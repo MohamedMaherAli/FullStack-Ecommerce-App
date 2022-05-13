@@ -8,7 +8,7 @@ import './App.css';
 function App() {
   const location = useLocation();
   const adminUrls = location.pathname.startsWith('/admin/');
-  const maxWdith = adminUrls ? false : 'lg';
+  const maxWdith = adminUrls ? false : 'xl';
   return (
     <div
       className='App'

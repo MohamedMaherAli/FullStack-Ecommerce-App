@@ -70,7 +70,7 @@ function Products() {
               >
                 Accessories
               </Typography>
-              <Grid container spacing={3}>
+              <Grid container spacing={1}>
                 {accessories.map((product) => (
                   <Product product={product} key={product._id} />
                 ))}
