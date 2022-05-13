@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Product({ product }) {
   const navigate = useNavigate();
   return (
-    <Grid item xs={12} sm={6} lg={4} xl={3}>
+    <Grid item xs={12} sm={6} lg={3} xl={3}>
       <Card
         sx={{
           maxWidth: 345,
