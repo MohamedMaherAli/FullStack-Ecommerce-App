@@ -91,7 +91,7 @@ function ProductScreen() {
         <Alert severity='error'>{error}</Alert>
       ) : (
         <Grid container columnSpacing={3}>
-          <Grid item xs={12} xl={8}>
+          <Grid item xs={12} md={8}>
             <Box
               component='img'
               alt='pillow'
