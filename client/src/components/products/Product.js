@@ -17,6 +17,7 @@ export default function Product({ product }) {
           maxWidth: 370,
           padding: '7px',
           height: '100%',
+          marginX: 'auto',
         }}
       >
         <CardActionArea onClick={() => navigate(`/product/${product._id}`)}>
