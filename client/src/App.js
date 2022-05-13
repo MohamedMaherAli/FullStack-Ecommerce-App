@@ -8,11 +8,16 @@ import './App.css';
 function App() {
   const location = useLocation();
   const adminUrls = location.pathname.startsWith('/admin/');
-  const maxWdith = adminUrls ? false : 'lg';
+  const maxWdith = adminUrls ? false : 'xl';
   return (
     <div
       className='App'
-      style={{ width: '100%', height: '100%', overflow: 'auto' }}
+      style={{
+        width: '100%',
+        height: '100%',
+        overflow: 'auto',
+        transform: 'scale(.8)',
+      }}
     >
       <CssBaseline />
       <NavBar />
