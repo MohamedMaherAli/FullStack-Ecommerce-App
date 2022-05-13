@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://emerchantapp.herokuapp.com' });
+const API = axios.create({ baseURL: 'emerchantapp.herokuapp.com' });
 
 //USER API
 export const signUp = (formData, config) =>
