@@ -1,9 +1,10 @@
 import { createStore, applyMiddleware, compose } from 'redux';
+import { composeWithDevTools } from '@redux-devtools/extension';
 import reducers from './reducers/index';
 import thunk from 'redux-thunk';
 
-const ReactReduxDevTools =
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+// const ReactReduxDevTools =
+//   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
 
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
@@ -30,10 +31,12 @@ const initialState = {
   userLoginReducer: { userInfo: userInfoFromStorage },
 };
 
+const middleware = [thunk];
+
 const store = createStore(
   reducers,
   initialState,
-  compose(applyMiddleware(thunk), ReactReduxDevTools)
+  composeWithDevTools(applyMiddleware(...middleware))
 );
 
 export default store;
