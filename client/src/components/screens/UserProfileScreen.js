@@ -152,7 +152,7 @@ function UserProfileScreen() {
   return (
     <>
       <Grid container spacing={3} sx={{ marginTop: theme.spacing(3) }}>
-        <Grid item xs={12} xl={4}>
+        <Grid item xs={12} md={4}>
           <Paper sx={{ padding: '20px' }}>
             {error ? <Alert severity='error'>{error}</Alert> : null}
             {loading ? <CircularProgress /> : null}
@@ -267,7 +267,7 @@ function UserProfileScreen() {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} xl={8}>
+        <Grid item xs={12} md={8}>
           {loadingOrder ? (
             <CircularProgress /> ? (
               errorOrder
