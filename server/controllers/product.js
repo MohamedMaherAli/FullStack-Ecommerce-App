@@ -127,7 +127,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     onSale,
     category,
     countInStock,
-    image: uploadedImageResponse.url,
+    image: uploadedImageResponse.secure_url,
     imagePublicId: uploadedImageResponse.public_id,
   });
   const createdProduct = await product.save();
@@ -160,7 +160,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
       const uploadedImageResponse = await cloudinary.uploader.upload(
         req.body.image
       );
-      product.image = uploadedImageResponse.url;
+      product.image = uploadedImageResponse.secure_url;
       product.imagePublicId = uploadedImageResponse.public_id;
     }
     await product.save();
