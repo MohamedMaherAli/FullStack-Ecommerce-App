@@ -14,7 +14,7 @@ export default function Product({ product }) {
     <Grid item xs={12} sm={6} lg={3} xl={3}>
       <Card
         sx={{
-          maxWidth: 345,
+          maxWidth: 355,
           padding: '7px',
           height: '100%',
         }}
