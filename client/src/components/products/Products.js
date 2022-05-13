@@ -70,7 +70,7 @@ function Products() {
               >
                 Accessories
               </Typography>
-              <Grid container>
+              <Grid container spacing={2}>
                 {accessories.map((product) => (
                   <Product product={product} key={product._id} />
                 ))}
@@ -95,7 +95,7 @@ function Products() {
               >
                 Groceries
               </Typography>
-              <Grid container>
+              <Grid container spacing={2}>
                 {groceries.map((product) => (
                   <Product product={product} key={product._id} />
                 ))}
@@ -120,7 +120,7 @@ function Products() {
               >
                 Clothing
               </Typography>
-              <Grid container>
+              <Grid container spacing={2}>
                 {clothing.map((product) => (
                   <Product product={product} key={product._id} />
                 ))}
